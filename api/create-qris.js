@@ -2,7 +2,7 @@ const axios = require('axios');
 
 // ambil dari Environment Variables Vercel → jaga di dashboard saja
 const cfg = {
-  atlanticApiKey: "",
+  atlanticApiKey: "dviVP9oF3jnBESvJx3xMbiVwNAISQ13EWCHtASX2z1BnPgZSQ8AhFYQMkhOUGIfzILVAnVdfqUPG13oUASdt2CO567z4KUHSsvfd",
   atlanticbaseUrl: 'https://atlantich2h.com'
 };
 
