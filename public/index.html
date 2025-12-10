@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Top-up QRIS</title>
+  <style>
+    body{font-family:system-ui;background:#f5f7fa;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+    .box{background:#fff;padding:2rem;border-radius:10px;width:320px;box-shadow:0 4px 18px rgba(0,0,0,.1)}
+    h3{margin-top:0;text-align:center}
+    input{width:100%;padding:.6rem;margin:.4rem 0;border:1px solid #bbb;border-radius:6px}
+    button{width:100%;padding:.7rem;background:#007bff;color:#fff;border:none;border-radius:6px;font-size:1rem;cursor:pointer}
+    button:disabled{background:#90c3ff}
+    #qr{text-align:center;margin-top:1rem}
+    #qr img{max-width:200px}
+    .err{color:#e74c3c;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h3>Top-up QRIS</h3>
+    <input id="amt" type="number" placeholder="Nominal (IDR)" min="10000">
+    <input id="name" type="text" placeholder="Nama Customer">
+    <button id="go">Buat QRIS</button>
+    <div id="qr" style="display:none">
+      <img id="qrimg">
+      <div style="font-size:.75rem;color:#555">Ref: <span id="ref"></span></div>
+    </div>
+    <div id="msg" class="err"></div>
+  </div>
+
+  <script>
+  const $=q=>document.querySelector(q);
+  $('#go').onclick=async()=>{
+    $('#go').disabled=true;
+    $('#msg').textContent='';
+    $('#qr').style.display='none';
+    const a=$('#amt').value.trim(), n=$('#name').value.trim();
+    if(!a||!n)return $('#msg').textContent='Isi semua.',$('#go').disabled=false;
+    try{
+      const r=await fetch('/api/create-qris',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:a,customerName:n})});
+      const j=await r.json();
+      if(!j.success)throw new Error(j.error);
+      $('#qrimg').src=j.qr_url;
+      $('#ref').textContent=j.id;
+      $('#qr').style.display='block';
+    }catch(e){
+      $('#msg').textContent=e.message||'Gagal';
+    }
+    $('#go').disabled=false;
+  }
+  </script>
+</body>
+</html>
